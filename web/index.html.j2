@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warp Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <a href="https://github.com/EnderKill98/perf-test-pwarps"><img id="github-corner" src="https://raw.githubusercontent.com/tholman/github-corners/a86239c4ad0c3079d365520d924a826a4b9a30b7/svg/github-corner-right.svg"></a>
+
+    <div class="container">
+        <header>
+            <h1>Player-Warp Gallery on Perf-Test</h1>
+        </header>
+
+        <main class="gallery">
+            {% for warp in warps %}
+            <div class="gallery-item"
+                 data-location="{{ warp.name | e }}"
+                 data-note="{{ (warp.note or '') | e }}"
+                 data-description="{{ warp.info | e }}">
+                <img src="{{ warp.screenshotHref | e }}" alt="{{ warp.name | e }}" loading="lazy">
+                <div class="overlay">
+                    <div class="location-name">{{ warp.name | e }}</div>
+                    {% if warp.note %}
+                    <div class="note">{{ warp.note | e }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </main>
+    </div>
+
+    <!-- Modal for enlarged image view -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close"><span>&times;</span></span>
+            <div class="modal-nav prev-nav" id="prevArrow">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <div class="modal-nav next-nav" id="nextArrow">
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" alt="">
+                <div class="modal-description">
+                <h3 id="modalTitle" class="modal-location-name" title="Click to copy warp command"></h3>
+                <div id="modalNote" class="modal-note"></div>
+                    <p id="modalText"></p>
+
+                    <!-- Add image counter -->
+                    <div class="image-counter" id="imageCounter">
+                        <span id="currentImage">1</span> / <span id="totalImages">1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <sub>Made by <a href="https://github.com/EnderKill98">EnderKill98</a>.</sub>
+        <br>
+        <sub>Website 98% done by Claude Sonnet 4 because I became lazy.</sub>
+    </footer>
+
+    <!-- Toast notification for clipboard -->
+    <div id="toast" class="toast">
+        <i class="fas fa-check-circle"></i>
+        <span>Copied to clipboard!</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
