@@ -86,7 +86,6 @@ if __name__ == "__main__":
     for fileName in files:
       srcPath = os.path.join(srcRoot, fileName)
       tgtPath = os.path.join(tgtRoot, fileName)
-      print(tgtPath)
       tgtPaths = [ (warp, tgtPath.replace("%warp%", warp["safeName"])) for warp in warps ] if "%warp%" in tgtPath else [ (None, tgtPath) ]
       for warp, tgtPath in tgtPaths:
         if fileName.endswith(".j2"):
