@@ -31,7 +31,7 @@ jobs:
       id: config-pages # Gets us the base url in advance
     - name: Generate site
       env:
-        BASE_URL: ${{steps.config-pages.outputs.page_url}}
+        BASE_URL: ${{steps.config-pages.outputs.base_url}}
       run: python 5_create_static.py data/ web/ dist/ ${BASE_URL}
 
     - name: Setup Pages
