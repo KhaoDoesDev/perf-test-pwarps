@@ -2,13 +2,13 @@
 {% block title %}{{ warp.name | e }}{% endblock %}
 {% block head %}
   {{ super() }}
-  <meta name="title" content="/pwarp {{ warp.name }}" />
-  <meta property="og:title" content="/pwarp {{ warp.name }}" />
+  {% set meta_title = "/pwarp %s" % warp.name %}
+  {% set meta_description = "%s's Player Warp: %s\nCreated at %s and visited at least %s times!" % (warp.owner, warp.name, warp.created, warp.visits) %}
 
-  <meta name="description" content="{{ warp.owner }}'s Player Warp: {{ warp.name }}.
-                                    Created at {{ warp.created }} and visted at least {{ warp.visited }} times!" />
-  <meta property="og:description" content="{{ warp.owner }}'s Player Warp: {{ warp.name }}" />
-
+  <meta name="title" content="{{ meta_title }}" />
+  <meta property="og:title" content="{{ meta_title }}" />
+  <meta name="description" content="{{ meta_description }}" />
+  <meta name="og:description" content="{{ meta_description }}" />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="{{root}}/{{ warp.screenshotHref }}" />
   <meta property="og:image:type" content="image/webp" />
