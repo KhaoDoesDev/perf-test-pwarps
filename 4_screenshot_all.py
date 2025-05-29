@@ -25,13 +25,19 @@ if __name__ == "__main__":
     if i < startAtIndex:
       continue
     print(f"[{i+1}/{len(warps)}] {warp}...")
-    mosquitto_pub("-h", "fd77::1", "-t", "minecraftclient/EnderKill98/cmd/chat", "-m", f"/pwarp {warp}")
+    if warp in [ "create", "remove" ]:
+      # Use silly inventory instead
+      mosquitto_pub("-h", "fd77::1", "-t", "minecraftclient/EnderKill98/cmd/chat", "-m", f"/pwarp open all -search {warp}")
+      time.sleep(0.75)
+      mosquitto_pub("-h", "fd77::1", "-t", "minecraftclient/EnderKill98/cmd/chat", "-m", f".cclick 0 0 pickup")
+    else:
+      mosquitto_pub("-h", "fd77::1", "-t", "minecraftclient/EnderKill98/cmd/chat", "-m", f"/pwarp {warp}")
     time.sleep(5)
     safeWarp = urllib.parse.quote(warp, safe="")
     screenshotFilePngPath = os.path.join(sys.argv[2], f"{safeWarp}.png")
     mosquitto_pub("-h", "fd77::1", "-t", "minecraftclient/EnderKill98/cmd/chat", "-m", f".screenshot {screenshotFilePngPath}")
     time.sleep(2)
     screenshotFileWebpPath = os.path.join(sys.argv[2], f"{safeWarp}.webp")
-    magick(screenshotFilePngPath, "-quality", "80", screenshotFileWebpPath)
+    magick(screenshotFilePngPath, "-quality", "70", screenshotFileWebpPath)
     os.unlink(screenshotFilePngPath)
 
