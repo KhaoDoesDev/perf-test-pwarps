@@ -18,14 +18,16 @@ function updateModalContent() {
     const modalText = document.getElementById('modalText');
 
     const currentData = galleryData[currentImageIndex];
-    let basePath = document.location.pathname;
-    if(document.location.pathname.includes("/pwarp/"))
-        basePath = document.location.pathname.split("/pwarp/")[0];
-    if(basePath.includes("/index.html"))
-        basePath = basePath.replace("/index.html", "");
-    if(basePath.endsWith("/"))
-        basePath = basePath.substring(0, basePath.length - 1);
-    history.replaceState(null, "", basePath + "/pwarp/" + currentData.safeName);
+    try {
+        let basePath = document.location.pathname;
+        if(document.location.pathname.includes("/pwarp/"))
+            basePath = document.location.pathname.split("/pwarp/")[0];
+        if(basePath.includes("/index.html"))
+            basePath = basePath.replace("/index.html", "");
+        if(basePath.endsWith("/"))
+            basePath = basePath.substring(0, basePath.length - 1);
+        history.replaceState(null, "", basePath + "/pwarp/" + currentData.safeName);
+    }catch(ignored) {} // Fails for local files due to security reasons
 
     modalImage.src = currentData.imageSrc;
     modalTitle.textContent = currentData.location;
