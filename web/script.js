@@ -263,6 +263,9 @@ function reorderGallery(critera, order) {
     } else if(critera == "created") {
         console.log("Sorting by created (" + order + ")");
         galleryItems.sort((a, b) => a.dataset.created.localeCompare(b.dataset.created) * sortMult);
+    } else if(critera == "visits") {
+        console.log("Sorting by visits (" + order + ")");
+        galleryItems.sort((a, b) => (parseInt(a.dataset.visits) - parseInt(b.dataset.visits)) * sortMult);
     } else if(critera == "shuffle") {
         console.log("Sorting by shuffle");
         shuffleArray(galleryItems);

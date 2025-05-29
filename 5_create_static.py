@@ -43,6 +43,7 @@ if __name__ == "__main__":
     info = None
     owner = None
     created = None
+    visits = None
     if os.path.exists(infoFilePath):
       with open(infoFilePath) as infoFile:
         info = ""
@@ -59,12 +60,15 @@ if __name__ == "__main__":
               created = datetime.datetime.strptime(time, "%d/%m/%Y %H:%M:%S").isoformat()
             except:
               print(f"Failed to parse created time of {warp}: {time}")
+          if line.startswith("Visits: "):
+            visits = line[len("Visits: "):].strip()
         info = info.strip()
 
     warps.append({
       "name": warp,
       "owner": owner,
       "created": created,
+      "visits": visits,
       "screenshotHref": screenshotHref,
       "info": info,
       "note": note,

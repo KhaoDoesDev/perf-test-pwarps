@@ -17,7 +17,7 @@
         </header>
 
         <div id="sort" onclick="setTimeout(onSortChanged, 0)">
-          <div id="sort-critera" class="radio"><span>Name</span><span>Owner</span><span>Created</span><span class="radio-selected">Shuffle</span></div>
+          <div id="sort-critera" class="radio"><span>Name</span><span>Owner</span><span>Created</span><span>Visits</span><span class="radio-selected">Shuffle</span></div>
           <div id="sort-order" class="radio"><span class="radio-selected">Asc</span><span>Desc</span></div>
         </div>
 
@@ -27,6 +27,7 @@
                  data-location="{{ warp.name | e }}"
                  data-owner="{{ warp.owner | e }}"
                  data-created="{{ warp.created | e }}"
+                 data-visits="{{ warp.visits | e }}"
                  data-note="{{ (warp.note or '') | e }}"
                  data-description="{{ warp.info | e }}">
                 <img src="{{ warp.screenshotHref | e }}" alt="{{ warp.name | e }}" loading="lazy">
