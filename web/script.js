@@ -18,6 +18,7 @@ function updateModalContent() {
     const modalText = document.getElementById('modalText');
 
     const currentData = galleryData[currentImageIndex];
+    document.location.hash = "#" + currentData.location;
 
     modalImage.src = currentData.imageSrc;
     modalTitle.textContent = currentData.location;
@@ -135,6 +136,15 @@ function adjustThumbnailsForReordering() {
     });
 }
 
+// Show toast notification
+function showToast() {
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Get all gallery items
     galleryItems = document.querySelectorAll('.gallery-item')
@@ -144,7 +154,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalNote = document.getElementById('modalNote');
     const modalText = document.getElementById('modalText');
     const closeModal = document.querySelector('.close');
-    const toast = document.getElementById('toast');
     const prevArrow = document.getElementById('prevArrow');
     const nextArrow = document.getElementById('nextArrow');
     const totalImagesSpan = document.getElementById('totalImages');
@@ -216,14 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeModalFunction() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-    }
-
-    // Show toast notification
-    function showToast() {
-        toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
+        document.location.hash = "";
     }
 
     // Radio functionality
@@ -260,6 +262,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Apply current sort
     onSortChanged();
+
+    // Open modal, if hash found in url
+    if(document.location.hash != null && document.location.hash.length > 0) {
+        let hash = document.location.hash;
+        if(hash.startsWith("#")) hash = hash.substring(1);
+        galleryData.forEach((data, index) => {
+            if(data.location === hash) {
+                openModal(index);
+            }
+        })
+    }
 });
 
 function shuffleArray(array) {
