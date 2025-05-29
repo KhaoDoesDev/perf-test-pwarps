@@ -27,7 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - uses: actions/configure-pages@vN
+    - uses: actions/configure-pages@v5
       id: config-pages # Gets us the base url in advance
     - name: Generate site
       env:
