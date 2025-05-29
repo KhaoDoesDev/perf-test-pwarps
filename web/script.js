@@ -34,19 +34,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Add event listeners to gallery items
     galleryItems.forEach((item, index) => {
-        const locationName = item.querySelector('.location-name');
+        const locationTitle = item.querySelector('.location-title');
         const image = item.querySelector('img');
 
-        // Handle location name click (copy to clipboard)
-        locationName.addEventListener('click', function(e) {
+        // Handle location title click (copy to clipboard)
+        locationTitle.addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent image modal from opening
             copyWarpCommand(item.dataset.location);
         });
 
         // Handle gallery item click (open modal)
         image.addEventListener('click', function(e) {
-            // Don't open modal if clicking on location name
-            if (e.target.closest('.location-name')) {
+            // Don't open modal if clicking on location title
+            if (e.target.closest('.location-title')) {
                 return;
             }
             
@@ -87,13 +87,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     navigateImage(1);
                     break;
-                case 'c':
-                case 'C':
-                    // Copy current warp command with 'C' key
-                    e.preventDefault();
-                    const currentData = galleryData[currentImageIndex];
-                    copyWarpCommand(currentData.location);
-                    break;
             }
         }
     });
@@ -126,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateModalContent() {
         const currentData = galleryData[currentImageIndex];
-        
+
         modalImage.src = currentData.imageSrc;
         modalTitle.textContent = currentData.location;
         modalText.textContent = currentData.description;

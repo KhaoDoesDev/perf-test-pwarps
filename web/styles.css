@@ -50,11 +50,11 @@ header h1 {
 }
 
 .gallery-item:hover {
-    transform: translateY(-5px);
+    /*transform: translateY(-5px);*/
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
 }
 
-.gallery-item img {
+.gallery-item > img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -62,7 +62,7 @@ header h1 {
     display: block;
 }
 
-.gallery-item:hover img {
+.gallery-item:hover > img {
     transform: scale(1.05);
 }
 
@@ -92,7 +92,7 @@ header h1 {
     pointer-events: all;
 }
 
-.location-name {
+.location-title {
     background: rgba(255, 255, 255, 0.9);
     color: #333;
     padding: 8px 16px;
@@ -106,9 +106,14 @@ header h1 {
     pointer-events: all;
     max-width: 80%;
     word-wrap: break-word;
+    line-height: 0.8;
 }
 
-.location-name:hover {
+.location-title .location-owner {
+    font-size: 60%;
+}
+
+.location-title:hover {
     background: rgba(255, 255, 255, 1);
     transform: scale(1.05);
 }
@@ -310,7 +315,7 @@ header h1 {
     cursor: pointer;
 }
 
-.gallery-item img {
+.gallery-item > img {
     pointer-events: auto;
     cursor: pointer;
 }

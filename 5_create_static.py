@@ -40,6 +40,7 @@ if __name__ == "__main__":
         note = noteFile.read().strip()
 
     info = None
+    owner = None
     if os.path.exists(infoFilePath):
       with open(infoFilePath) as infoFile:
         info = ""
@@ -48,10 +49,13 @@ if __name__ == "__main__":
           if i == 0:
             continue # Skip first line
           info += line + "\n"
+          if line.startswith("Owner: "):
+            owner = line[len("Owner: "):].strip()
         info = info.strip()
 
     warps.append({
       "name": warp,
+      "owner": owner,
       "screenshotHref": screenshotHref,
       "info": info,
       "note": note,

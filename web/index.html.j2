@@ -20,11 +20,15 @@
             {% for warp in warps %}
             <div class="gallery-item"
                  data-location="{{ warp.name | e }}"
+                 data-owner="{{ warp.owner | e }}"
                  data-note="{{ (warp.note or '') | e }}"
                  data-description="{{ warp.info | e }}">
                 <img src="{{ warp.screenshotHref | e }}" alt="{{ warp.name | e }}" loading="lazy">
                 <div class="overlay">
-                    <div class="location-name">{{ warp.name | e }}</div>
+                    <div class="location-title">
+                    <span>{{ warp.name | e }}</span><br>
+                    <span class="location-owner">by {{ warp.owner | e }}</span>
+                    </div>
                     {% if warp.note %}
                     <div class="note">{{ warp.note | e }}</div>
                     {% endif %}
