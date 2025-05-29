@@ -558,17 +558,12 @@ footer a {
 }
 
 .radio span.radio-selected {
-    background-color: #797979;
-    color: #efefef;
+    background-color: #55FFFF;
 }
 
 .radio span:first-child {
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
-}
-
-.radio span:not(first-child) {
-    border-left: solid 0.5px black;
 }
 
 .radio span:not(last-child) {
