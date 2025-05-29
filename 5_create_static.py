@@ -89,16 +89,14 @@ if __name__ == "__main__":
       print(tgtPath)
       tgtPaths = [ (warp, tgtPath.replace("%warp%", warp["safeName"])) for warp in warps ] if "%warp%" in tgtPath else [ (None, tgtPath) ]
       for warp, tgtPath in tgtPaths:
-        print("A", warp, tgtPath)
         if fileName.endswith(".j2"):
           renderSrcPath = os.path.relpath(os.path.join(srcRoot, fileName), webDirectory) # Relative to webdir as specified in Environment
           renderTgtPath = tgtPath[:-len(".j2")]
           renderTgtDir = os.path.dirname(tgtPath)
-          print(renderTgtDir)
           if not os.path.exists(renderTgtDir):
             pathlib.Path(renderTgtDir).mkdir(parents=True) # Ensure directories in path exist
           relRootPath = os.path.relpath(staticDirectory, os.path.dirname(renderTgtPath))
-          print(f"Jinja2 Rendering: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {relRootPath})")
+          print(f"Rendering Jinja2: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {relRootPath})")
           template = env.get_template(renderSrcPath)
           rendered = template.render(warp=warp, warps=warps, root=relRootPath)
           with open(renderTgtPath, "w") as renderedFile:
