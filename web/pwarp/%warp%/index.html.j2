@@ -5,16 +5,17 @@
   {% set meta_title = "/pwarp %s" % warp.name %}
   {% set meta_description = "%s's Player Warp: %s\nCreated at %s and visited at least %s times!" % (warp.owner, warp.name, warp.created, warp.visits) %}
 
-  <meta name="title" content="{{ meta_title }}" />
+  <!-- https://ogp.me/ -->
   <meta property="og:title" content="{{ meta_title }}" />
-  <meta name="description" content="{{ meta_description }}" />
-  <meta name="og:description" content="{{ meta_description }}" />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{root}}/pwarp/{{ warp.safeName }}" />
+  <meta property="og:description" content="{{ meta_description }}" />
   <meta property="og:image" content="{{root}}/{{ warp.screenshotHref }}" />
   <meta property="og:image:type" content="image/webp" />
   <meta property="og:image:alt" content="Screenshot of Player Warp {{ warp.name }}" />
 
-  <meta name="twitter:card" content="summary_large_image"> <!-- Make image bigger -->
+  <!-- Request bigger image -->
+  <meta name="twitter:card" content="summary_large_image">
 
   <meta name="theme-color" content="#55FFFF"> <!-- §b -->
 {% endblock %}
