@@ -27,9 +27,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - uses: actions/configure-pages@vN
+      id: config-pages # Gets us the base url in advance
     - name: Generate site
       env:
-        BASE_URL: ${{steps.deployment.outputs.page_url}}
+        BASE_URL: ${{steps.config-pages.outputs.page_url}}
       run: python 5_create_static.py data/ web/ dist/ ${BASE_URL}
 
     - name: Setup Pages
@@ -41,5 +43,4 @@ jobs:
         path: dist/
 
     - name: Deploy to Pages
-      id: deployment
       uses: actions/deploy-pages@v4
