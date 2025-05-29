@@ -20,7 +20,7 @@ function updateModalContent() {
     const currentData = galleryData[currentImageIndex];
     let basePath = document.location.pathname;
     if(document.location.pathname.includes("/pwarp/"))
-        basePath = document.location.pathname.split("/pwarp/");
+        basePath = document.location.pathname.split("/pwarp/")[0];
     if(basePath.includes("/index.html"))
         basePath = basePath.replace("/index.html", "");
     if(basePath.endsWith("/"))
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let path = document.location.pathname;
     if (path.includes("/pwarp/")) {
         let safeName = path.split("/pwarp/")[1];
-        if (safeName.endswith("/")) safeName = safeName.substring(0, safeName.length-1);
+        if (safeName.endsWith("/")) safeName = safeName.substring(0, safeName.length-1);
         galleryData.forEach((data, index) => {
             if(data.safeName == safeName) {
                 openModal(index);
@@ -296,6 +296,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function toAbsLink(link) {
+  if (typeof(link) !== "string") return link;
   if (link.startsWith("http://") || link.startswith("https://")) return link;
   return new URL(link, document.baseURI).href;
 }
