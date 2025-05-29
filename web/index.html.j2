@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% block head %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Warp Gallery</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>{% block title %}Warp Gallery{% endblock %}</title>
+    <link rel="stylesheet" href="{{root}}/styles.css">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% endblock %}
 </head>
 <body>
+    {% block body %}
     <a href="https://github.com/EnderKill98/perf-test-pwarps"><img id="github-corner" src="https://raw.githubusercontent.com/tholman/github-corners/a86239c4ad0c3079d365520d924a826a4b9a30b7/svg/github-corner-right.svg"></a>
 
     <div class="container">
@@ -24,20 +27,21 @@
         <main class="gallery">
             {% for warp in warps %}
             <div class="gallery-item"
-                 data-location="{{ warp.name | e }}"
-                 data-owner="{{ warp.owner | e }}"
-                 data-created="{{ warp.created | e }}"
-                 data-visits="{{ warp.visits | e }}"
-                 data-note="{{ (warp.note or '') | e }}"
-                 data-description="{{ warp.info | e }}">
-                <img src="{{ warp.screenshotHref | e }}" alt="{{ warp.name | e }}" loading="lazy">
+                 data-location="{{ warp.name }}"
+                 data-safename="{{ warp.safeName }}"
+                 data-owner="{{ warp.owner }}"
+                 data-created="{{ warp.created }}"
+                 data-visits="{{ warp.visits }}"
+                 data-note="{{ (warp.note or '') }}"
+                 data-description="{{ warp.info }}">
+                <img src="{{root}}/{{ warp.screenshotHref }}" alt="{{ warp.name }}" loading="lazy">
                 <div class="overlay">
                     <div class="location-title">
-                    <span>{{ warp.name | e }}</span><br>
-                    <span class="location-owner">by {{ warp.owner | e }}</span>
+                        <span>{{ warp.name }}</span><br>
+                        <span class="location-owner">by {{ warp.owner }}</span>
                     </div>
                     {% if warp.note %}
-                    <div class="note">{{ warp.note | e }}</div>
+                    <div class="note">{{ warp.note }}</div>
                     {% endif %}
                 </div>
             </div>
@@ -83,6 +87,7 @@
         <span>Copied to clipboard!</span>
     </div>
 
-    <script src="script.js"></script>
+    <script src="{{root}}/script.js"></script>
+    {% endblock %}
 </body>
 </html>

@@ -14,22 +14,23 @@ if __name__ == "__main__":
     print(f"Usage: {sys.argv[0]} <DataDirectory> <WebDirectory> <StaticDirectory>", file=sys.stderr)
     exit(1)
     warps = {} # Warp: FilePath
+  dataDirectory, webDirectory, staticDirectory = sys.argv[1:4]
 
   warps = []
-  for fileName in os.listdir(sys.argv[1]):
+  for fileName in os.listdir(dataDirectory):
     if not fileName.endswith(".info"):
       continue
     fileNameBase = fileName[:-len(".info")]
     warp = urllib.parse.unquote(fileNameBase)
     #print(f"{warp}")
-    infoFilePath = os.path.join(sys.argv[1], f"{fileNameBase}.info")
-    screenshotFilePath = os.path.join(sys.argv[1], f"{fileNameBase}.webp")
-    noteFilePath = os.path.join(sys.argv[1], f"{fileNameBase}.note")
+    infoFilePath = os.path.join(dataDirectory, f"{fileNameBase}.info")
+    screenshotFilePath = os.path.join(dataDirectory, f"{fileNameBase}.webp")
+    noteFilePath = os.path.join(dataDirectory, f"{fileNameBase}.note")
 
     screenshotHref = None
     if os.path.exists(screenshotFilePath):
       # Copy screenshot into static/imgs
-      screenshotStaticImgFolderPath = os.path.join(sys.argv[3], "img")
+      screenshotStaticImgFolderPath = os.path.join(staticDirectory, "img")
       screenshotStaticPath = os.path.join(screenshotStaticImgFolderPath, fileNameBase + ".webp")
       pathlib.Path(screenshotStaticImgFolderPath).mkdir(parents=True, exist_ok=True)
       shutil.copyfile(screenshotFilePath, screenshotStaticPath)
@@ -64,8 +65,11 @@ if __name__ == "__main__":
             visits = line[len("Visits: "):].strip()
         info = info.strip()
 
+    safeName = urllib.parse.quote(warp, safe="")
+
     warps.append({
       "name": warp,
+      "safeName": safeName,
       "owner": owner,
       "created": created,
       "visits": visits,
@@ -75,12 +79,24 @@ if __name__ == "__main__":
     })
 
   # Copy files in web/ + render .j2 templates out, removing that extension
-  env = jinja2.Environment(loader=jinja2.FileSystemLoader(sys.argv[2]))
-  for fileName in os.listdir(sys.argv[2]):
-    if fileName.endswith(".j2"):
-      template = env.get_template(fileName)
-      rendered = template.render(warps=warps)
-      with open(os.path.join(sys.argv[3], fileName[:-len(".j2")]), "w") as renderedFile:
-        renderedFile.write(rendered)
-    else:
-      shutil.copyfile(os.path.join(sys.argv[2], fileName), os.path.join(sys.argv[3], fileName))
+  env = jinja2.Environment(loader=jinja2.FileSystemLoader(webDirectory), autoescape=True)
+  for srcRoot, dirs, files in os.walk(webDirectory):
+    tgtRoot = os.path.normpath(os.path.join(staticDirectory, os.path.relpath(srcRoot, webDirectory)))
+    print(f"SrcRoot: {srcRoot}, TgtRoot: {tgtRoot}")
+    for dirName in dirs:
+      if not os.path.exists(os.path.join(tgtRoot, dirName)):
+        os.mkdir(os.path.join(tgtRoot, dirName))
+    for fileName in files:
+      subFileNames = [ (warp, fileName.replace("%warp%", warp["safeName"])) for warp in warps ] if "%warp%" in fileName else [ (None, fileName) ]
+      for warp, subFileName in subFileNames:
+        if fileName.endswith(".j2"):
+          renderSrcPath = os.path.relpath(os.path.join(srcRoot, fileName), webDirectory)
+          renderTgtPath = os.path.join(tgtRoot, subFileName[:-len(".j2")])
+          relRootPath = os.path.relpath(staticDirectory, os.path.dirname(renderTgtPath))
+          print(f"Jinja2 Rendering: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {relRootPath})")
+          template = env.get_template(renderSrcPath)
+          rendered = template.render(warp=warp, warps=warps, root=relRootPath)
+          with open(renderTgtPath, "w") as renderedFile:
+            renderedFile.write(rendered)
+        else:
+          shutil.copyfile(os.path.join(webDirectory, fileName), os.path.join(staticDirectory, fileName))

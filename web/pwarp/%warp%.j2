@@ -1,0 +1,21 @@
+{% extends "index.html.j2" %}
+{% block title %}{{ warp.name | e }}{% endblock %}
+{% block head %}
+  {{ super() }}
+  <title>Meta Tags — Preview, Edit and Generate</title>
+  <meta name="title" content="/pwarp {{ warp.name }}" />
+  <meta property="og:title" content="/pwarp {{ warp.name }}" />
+
+  <meta name="description" content="{{ warp.owner }}'s Player Warp: {{ warp.name }}.
+                                    Created at {{ warp.created }} and visted at least {{ warp.visited }} times!" />
+  <meta property="og:description" content="{{ warp.owner }}'s Player Warp: {{ warp.name }}" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="{{root}}/{{ warp.screenshotHref }}" />
+  <meta property="og:image:type" content="image/webp" />
+  <meta property="og:image:alt" content="Screenshot of Player Warp {{ warp.name }}" />
+
+  <meta name="twitter:card" content="summary_large_image"> <!-- Make image bigger -->
+
+  <meta name="theme-color" content="#55FFFF"> <!-- §b -->
+{% endblock %}
