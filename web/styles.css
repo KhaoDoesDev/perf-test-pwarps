@@ -542,3 +542,45 @@ footer a {
     top: 0;
     right: 0;
 }
+
+.radio {
+    display: inline;
+    margin: 0 3px;
+}
+
+.radio span {
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 3px;
+    background-color: #ffffff;
+    color: #1c1c1c;
+    cursor: pointer;
+}
+
+.radio span.radio-selected {
+    background-color: #797979;
+    color: #efefef;
+}
+
+.radio span:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.radio span:not(first-child) {
+    border-left: solid 0.5px black;
+}
+
+.radio span:not(last-child) {
+    border-right: solid 0.5px black;
+}
+
+.radio span:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#sort {
+    width: max-content;
+    margin: 0 auto;
+}

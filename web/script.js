@@ -136,7 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update arrow states
         prevArrow.classList.toggle('disabled', currentImageIndex === 0);
         nextArrow.classList.toggle('disabled', currentImageIndex === galleryData.length - 1);
-        
+
         // Add loading effect
         modalImage.style.opacity = '0.5';
         modalImage.onload = function() {
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (err) {
             console.error('Fallback: Could not copy text: ', err);
         }
-        
+
         document.body.removeChild(textArea);
     }
 
@@ -199,4 +199,86 @@ document.addEventListener('DOMContentLoaded', function() {
             toast.classList.remove('show');
         }, 3000);
     }
+
+    // Radio functionality
+    for(radioEl of document.querySelectorAll(".radio")) {
+        let subEls = radioEl.querySelectorAll("span");
+        for(subEl of subEls) {
+            const thisSubEl = subEl;
+            thisSubEl.addEventListener("click", () => {
+                for(anySubEl of subEls) {
+                    anySubEl.classList.remove("radio-selected");
+                }
+                thisSubEl.classList.add("radio-selected");
+            });
+        }
+    }
+
+    // Load saved sorting
+    if(localStorage.getItem("pwarps-sort-critera") != null) {
+        for(el of document.querySelectorAll("#sort-critera span")) {
+            el.classList.remove("radio-selected");
+            if(el.innerText.toLowerCase() == localStorage.getItem("pwarps-sort-critera")) {
+                el.classList.add("radio-selected");
+            }
+        }
+    }
+    if(localStorage.getItem("pwarps-sort-order") != null) {
+        for(el of document.querySelectorAll("#sort-order span")) {
+            el.classList.remove("radio-selected");
+            if(el.innerText.toLowerCase() == localStorage.getItem("pwarps-sort-order")) {
+                el.classList.add("radio-selected");
+            }
+        }
+    }
+
+    // Apply current sort
+    onSortChanged();
 });
+
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+
+function reorderGallery(critera, order) {
+    let gallery = document.querySelector(".gallery");
+    let galleryItems = gallery.querySelectorAll(".gallery-item");
+    galleryItems = Array.prototype.slice.call(galleryItems, 0); // Turn into array
+    console.log("Items: " + galleryItems.length);
+    for(galleryItem of galleryItems) {
+        gallery.removeChild(galleryItem);
+    }
+    let sortMult = order == "desc" ? -1 : 1;
+    if(critera == "name") {
+        console.log("Sorting by name (" + order + ")");
+        const onlyAlphaNum = (str) => str.match(/[a-zA-Z0-9]/g).join("");
+        galleryItems.sort((a, b) => onlyAlphaNum(a.dataset.location).toLowerCase().localeCompare(onlyAlphaNum(b.dataset.location).toLowerCase()) * sortMult);
+    } else if(critera == "owner") {
+        console.log("Sorting by owner (" + order + ")");
+        galleryItems.sort((a, b) => a.dataset.owner.toLowerCase().localeCompare(b.dataset.owner.toLowerCase()) * sortMult);
+    } else if(critera == "created") {
+        console.log("Sorting by created (" + order + ")");
+        galleryItems.sort((a, b) => a.dataset.created.localeCompare(b.dataset.created) * sortMult);
+    } else if(critera == "shuffle") {
+        console.log("Sorting by shuffle");
+        shuffleArray(galleryItems);
+    } else {
+        console.error("Unknown critera: " + critera);
+    }
+    for(galleryItem of galleryItems) {
+        gallery.appendChild(galleryItem);
+    }
+}
+
+function onSortChanged() {
+    let critera = document.querySelector("#sort-critera .radio-selected").innerText.toLowerCase();
+    let order = document.querySelector("#sort-order .radio-selected").innerText.toLowerCase();
+
+    localStorage.setItem("pwarps-sort-critera", critera);
+    localStorage.setItem("pwarps-sort-order", order);
+    reorderGallery(critera, order);
+}

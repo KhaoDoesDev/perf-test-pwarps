@@ -16,11 +16,17 @@
             <h1>Player-Warp Gallery on Perf-Test</h1>
         </header>
 
+        <div id="sort" onclick="setTimeout(onSortChanged, 0)">
+          <div id="sort-critera" class="radio"><span>Name</span><span>Owner</span><span>Created</span><span class="radio-selected">Shuffle</span></div>
+          <div id="sort-order" class="radio"><span class="radio-selected">Asc</span><span>Desc</span></div>
+        </div>
+
         <main class="gallery">
             {% for warp in warps %}
             <div class="gallery-item"
                  data-location="{{ warp.name | e }}"
                  data-owner="{{ warp.owner | e }}"
+                 data-created="{{ warp.created | e }}"
                  data-note="{{ (warp.note or '') | e }}"
                  data-description="{{ warp.info | e }}">
                 <img src="{{ warp.screenshotHref | e }}" alt="{{ warp.name | e }}" loading="lazy">

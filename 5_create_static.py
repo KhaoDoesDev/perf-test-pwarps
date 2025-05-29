@@ -7,6 +7,7 @@ import os.path
 import urllib.parse
 import shutil
 import pathlib
+import datetime
 
 if __name__ == "__main__":
   if len(sys.argv) != 4:
@@ -20,7 +21,7 @@ if __name__ == "__main__":
       continue
     fileNameBase = fileName[:-len(".info")]
     warp = urllib.parse.unquote(fileNameBase)
-    print(f"{warp}")
+    #print(f"{warp}")
     infoFilePath = os.path.join(sys.argv[1], f"{fileNameBase}.info")
     screenshotFilePath = os.path.join(sys.argv[1], f"{fileNameBase}.webp")
     noteFilePath = os.path.join(sys.argv[1], f"{fileNameBase}.note")
@@ -41,6 +42,7 @@ if __name__ == "__main__":
 
     info = None
     owner = None
+    created = None
     if os.path.exists(infoFilePath):
       with open(infoFilePath) as infoFile:
         info = ""
@@ -51,11 +53,18 @@ if __name__ == "__main__":
           info += line + "\n"
           if line.startswith("Owner: "):
             owner = line[len("Owner: "):].strip()
+          if line.startswith("Time Created: "):
+            time = line[line.index(":")+1:].strip()
+            try:
+              created = datetime.datetime.strptime(time, "%d/%m/%Y %H:%M:%S").isoformat()
+            except:
+              print(f"Failed to parse created time of {warp}: {time}")
         info = info.strip()
 
     warps.append({
       "name": warp,
       "owner": owner,
+      "created": created,
       "screenshotHref": screenshotHref,
       "info": info,
       "note": note,
