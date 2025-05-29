@@ -28,7 +28,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Generate site
-      run: python 5_create_static.py data/ web/ dist/
+      run: python 5_create_static.py data/ web/ dist/ ${{steps.deployment.outputs.page_url}}
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
@@ -39,4 +39,5 @@ jobs:
         path: dist/
 
     - name: Deploy to Pages
+      id: deployment
       uses: actions/deploy-pages@v4

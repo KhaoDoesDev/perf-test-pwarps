@@ -10,11 +10,14 @@ import pathlib
 import datetime
 
 if __name__ == "__main__":
-  if len(sys.argv) != 4:
-    print(f"Usage: {sys.argv[0]} <DataDirectory> <WebDirectory> <StaticDirectory>", file=sys.stderr)
+  if len(sys.argv) < 4:
+    print(f"Usage: {sys.argv[0]} <DataDirectory> <WebDirectory> <StaticDirectory> [BaseUrl]", file=sys.stderr)
     exit(1)
     warps = {} # Warp: FilePath
   dataDirectory, webDirectory, staticDirectory = sys.argv[1:4]
+  baseUrl = sys.argv[4] if len(sys.argv) >= 5 else None
+  if baseUrl.endswith("/"):
+    baseUrl = baseUrl[:-1]
 
   warps = []
   for fileName in os.listdir(dataDirectory):
@@ -94,10 +97,12 @@ if __name__ == "__main__":
           renderTgtDir = os.path.dirname(tgtPath)
           if not os.path.exists(renderTgtDir):
             pathlib.Path(renderTgtDir).mkdir(parents=True) # Ensure directories in path exist
-          relRootPath = os.path.relpath(staticDirectory, os.path.dirname(renderTgtPath))
-          print(f"Rendering Jinja2: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {relRootPath})")
+          root = os.path.relpath(staticDirectory, os.path.dirname(renderTgtPath))
+          if baseUrl is not None:
+            root = baseUrl
+          print(f"Rendering Jinja2: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {root})")
           template = env.get_template(renderSrcPath)
-          rendered = template.render(warp=warp, warps=warps, root=relRootPath)
+          rendered = template.render(warp=warp, warps=warps, root=root)
           with open(renderTgtPath, "w") as renderedFile:
             renderedFile.write(rendered)
         else:
