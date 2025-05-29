@@ -83,15 +83,20 @@ if __name__ == "__main__":
   for srcRoot, dirs, files in os.walk(webDirectory):
     tgtRoot = os.path.normpath(os.path.join(staticDirectory, os.path.relpath(srcRoot, webDirectory)))
     print(f"SrcRoot: {srcRoot}, TgtRoot: {tgtRoot}")
-    for dirName in dirs:
-      if not os.path.exists(os.path.join(tgtRoot, dirName)):
-        os.mkdir(os.path.join(tgtRoot, dirName))
     for fileName in files:
-      subFileNames = [ (warp, fileName.replace("%warp%", warp["safeName"])) for warp in warps ] if "%warp%" in fileName else [ (None, fileName) ]
-      for warp, subFileName in subFileNames:
+      srcPath = os.path.join(srcRoot, fileName)
+      tgtPath = os.path.join(tgtRoot, fileName)
+      print(tgtPath)
+      tgtPaths = [ (warp, tgtPath.replace("%warp%", warp["safeName"])) for warp in warps ] if "%warp%" in tgtPath else [ (None, tgtPath) ]
+      for warp, tgtPath in tgtPaths:
+        print("A", warp, tgtPath)
         if fileName.endswith(".j2"):
-          renderSrcPath = os.path.relpath(os.path.join(srcRoot, fileName), webDirectory)
-          renderTgtPath = os.path.join(tgtRoot, subFileName[:-len(".j2")])
+          renderSrcPath = os.path.relpath(os.path.join(srcRoot, fileName), webDirectory) # Relative to webdir as specified in Environment
+          renderTgtPath = tgtPath[:-len(".j2")]
+          renderTgtDir = os.path.dirname(tgtPath)
+          print(renderTgtDir)
+          if not os.path.exists(renderTgtDir):
+            pathlib.Path(renderTgtDir).mkdir(parents=True) # Ensure directories in path exist
           relRootPath = os.path.relpath(staticDirectory, os.path.dirname(renderTgtPath))
           print(f"Jinja2 Rendering: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {relRootPath})")
           template = env.get_template(renderSrcPath)
@@ -99,4 +104,4 @@ if __name__ == "__main__":
           with open(renderTgtPath, "w") as renderedFile:
             renderedFile.write(rendered)
         else:
-          shutil.copyfile(os.path.join(webDirectory, fileName), os.path.join(staticDirectory, fileName))
+          shutil.copyfile(srcPath, tgtPath)
