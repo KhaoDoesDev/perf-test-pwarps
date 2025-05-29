@@ -248,7 +248,6 @@ function reorderGallery(critera, order) {
     let gallery = document.querySelector(".gallery");
     let galleryItems = gallery.querySelectorAll(".gallery-item");
     galleryItems = Array.prototype.slice.call(galleryItems, 0); // Turn into array
-    console.log("Items: " + galleryItems.length);
     for(galleryItem of galleryItems) {
         gallery.removeChild(galleryItem);
     }
