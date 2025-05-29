@@ -14,9 +14,8 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{steps.deployment.outputs.page_url}}
+    env:
+      BASE_URL: ${{steps.deployment.outputs.page_url}}
     steps:
     - uses: actions/checkout@v4
 
@@ -31,7 +30,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Generate site
-      run: python 5_create_static.py data/ web/ dist/ ${{steps.deployment.outputs.page_url}}
+      run: python 5_create_static.py data/ web/ dist/ ${BASE_URL}
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
