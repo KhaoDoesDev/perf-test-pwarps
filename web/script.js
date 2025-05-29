@@ -28,6 +28,7 @@ function updateModalContent() {
             basePath = basePath.substring(0, basePath.length - 1);
         history.replaceState(null, "", basePath + "/pwarp/" + currentData.safeName);
     }catch(ignored) {} // Fails for local files due to security reasons
+    document.querySelector("title").innerText = currentData.location;
 
     modalImage.src = currentData.imageSrc;
     modalTitle.textContent = currentData.location;
@@ -240,6 +241,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if(newPath === "") newPath = "/";
             history.replaceState(null, "", newPath);
         }
+        document.querySelector("title").innerText = "PWarps";
     }
 
     // Radio functionality
