@@ -278,7 +278,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Open modal, if url has /pwarp/ in it
     let path = document.location.pathname;
     if (path.includes("/pwarp/")) {
-        let safeName = path.split("/pwarp/")[1]
+        let safeName = path.split("/pwarp/")[1];
+        if (safeName.endswith("/")) safeName = safeName.substring(0, safeName.length-1);
         galleryData.forEach((data, index) => {
             if(data.safeName == safeName) {
                 openModal(index);
