@@ -286,7 +286,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         })
     }
+
+    for (imgEl of document.querySelectorAll("img")) {
+      let newHref = toAbsLink(imgEl.href);
+      if (imgEl.href != newHref) {
+        imgEl.href = newHref;
+      }
+    }
 });
+
+function toAbsLink(link) {
+  if (link.startsWith("http://") || link.startswith("https://")) return link;
+  return new URL(link, document.baseURI).href;
+}
 
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
