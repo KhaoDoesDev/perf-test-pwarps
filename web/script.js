@@ -1,21 +1,126 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Get all gallery items
-    const galleryItems = document.querySelectorAll('.gallery-item');
+let galleryItems = null;
+let galleryData = null;
+let currentImageIndex = null;
+
+function openModal(index) {
+    const modal = document.getElementById('imageModal');
+    currentImageIndex = index;
+    updateModalContent();
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function updateModalContent() {
     const modal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
-    const modalTitle = document.getElementById('modalTitle');
+    const currentImageSpan = document.getElementById('currentImage');
     const modalNote = document.getElementById('modalNote');
     const modalText = document.getElementById('modalText');
-    const closeModal = document.querySelector('.close');
-    const toast = document.getElementById('toast');
-    const prevArrow = document.getElementById('prevArrow');
-    const nextArrow = document.getElementById('nextArrow');
-    const currentImageSpan = document.getElementById('currentImage');
-    const totalImagesSpan = document.getElementById('totalImages');
-    
-    let currentImageIndex = 0;
-    let galleryData = [];
 
+    const currentData = galleryData[currentImageIndex];
+
+    modalImage.src = currentData.imageSrc;
+    modalTitle.textContent = currentData.location;
+    modalText.textContent = currentData.description;
+    currentImageSpan.textContent = currentImageIndex + 1;
+
+    // Update note
+    if (currentData.note && currentData.note.trim() !== '') {
+        modalNote.textContent = currentData.note;
+        modalNote.style.display = 'block';
+    } else {
+        modalNote.style.display = 'none';
+    }
+
+    // Update arrow states
+    prevArrow.classList.toggle('disabled', currentImageIndex === 0);
+    nextArrow.classList.toggle('disabled', currentImageIndex === galleryData.length - 1);
+
+    // Add loading effect
+    modalImage.style.opacity = '0.5';
+    modalImage.onload = function() {
+        modalImage.style.opacity = '1';
+    };
+}
+
+
+function copyWarpCommand(location) {
+    const textToCopy = `/pwarp ${location}`;
+
+    // Copy to clipboard
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            showToast();
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            fallbackCopyTextToClipboard(textToCopy);
+        });
+    } else {
+        fallbackCopyTextToClipboard(textToCopy);
+    }
+}
+
+// Fallback copy function for older browsers
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+
+    // Avoid scrolling to bottom
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.position = 'fixed';
+    textArea.style.opacity = '0';
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showToast();
+        }
+    } catch (err) {
+        console.error('Fallback: Could not copy text: ', err);
+    }
+
+    document.body.removeChild(textArea);
+}
+
+function adjustThumbnailsForReordering() {
+    galleryItems = document.querySelectorAll('.gallery-item');
+    // Add event listeners to gallery items
+    galleryItems.forEach((item, index) => {
+        const locationTitle = item.querySelector('.location-title');
+        const image = item.querySelector('img');
+
+
+        // Handle location title click (copy to clipboard)
+        let titleHandler = function(e) {
+            e.stopPropagation(); // Prevent image modal from opening
+            copyWarpCommand(item.dataset.location);
+        };
+        if(locationTitle.titleHandler != null)
+            locationTitle.removeEventListener("click", locationTitle.titleHandler);
+        locationTitle.addEventListener('click', titleHandler);
+        locationTitle.titleHandler = titleHandler;
+
+        // Handle gallery item click (open modal)
+        let imageHandler = function(e) {
+            // Don't open modal if clicking on location title
+            if (e.target.closest('.location-title')) {
+                return;
+            }
+
+            openModal(index);
+        };
+        if(image.imageHandler != null)
+            image.removeEventListener("click", image.imageHandler);
+        image.addEventListener('click', imageHandler);
+        image.imageHandler = imageHandler;
+    });
+
+    galleryData = [];
     // Build gallery data array
     galleryItems.forEach((item, index) => {
         const image = item.querySelector('img');
@@ -28,31 +133,28 @@ document.addEventListener('DOMContentLoaded', function() {
             index: index
         });
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get all gallery items
+    galleryItems = document.querySelectorAll('.gallery-item')
+    const modal = document.getElementById('imageModal');
+    const modalImage = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalNote = document.getElementById('modalNote');
+    const modalText = document.getElementById('modalText');
+    const closeModal = document.querySelector('.close');
+    const toast = document.getElementById('toast');
+    const prevArrow = document.getElementById('prevArrow');
+    const nextArrow = document.getElementById('nextArrow');
+    const totalImagesSpan = document.getElementById('totalImages');
+
+    currentImageIndex = 0;
+
+    adjustThumbnailsForReordering();
 
     // Set total images count
     totalImagesSpan.textContent = galleryData.length;
-
-    // Add event listeners to gallery items
-    galleryItems.forEach((item, index) => {
-        const locationTitle = item.querySelector('.location-title');
-        const image = item.querySelector('img');
-
-        // Handle location title click (copy to clipboard)
-        locationTitle.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent image modal from opening
-            copyWarpCommand(item.dataset.location);
-        });
-
-        // Handle gallery item click (open modal)
-        image.addEventListener('click', function(e) {
-            // Don't open modal if clicking on location title
-            if (e.target.closest('.location-title')) {
-                return;
-            }
-            
-            openModal(index);
-        });
-    });
 
     // Modal title click (copy to clipboard)
     modalTitle.addEventListener('click', function(e) {
@@ -93,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close modal functionality
     closeModal.addEventListener('click', closeModalFunction);
-    
+
     // Close modal when clicking outside of it
     modal.addEventListener('click', function(e) {
         if (e.target === modal) {
@@ -101,95 +203,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    function openModal(index) {
-        currentImageIndex = index;
-        updateModalContent();
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-    }
 
     function navigateImage(direction) {
         const newIndex = currentImageIndex + direction;
-        
+
         if (newIndex >= 0 && newIndex < galleryData.length) {
             currentImageIndex = newIndex;
             updateModalContent();
         }
     }
 
-    function updateModalContent() {
-        const currentData = galleryData[currentImageIndex];
-
-        modalImage.src = currentData.imageSrc;
-        modalTitle.textContent = currentData.location;
-        modalText.textContent = currentData.description;
-        currentImageSpan.textContent = currentImageIndex + 1;
-        
-        // Update note
-        if (currentData.note && currentData.note.trim() !== '') {
-            modalNote.textContent = currentData.note;
-            modalNote.style.display = 'block';
-        } else {
-            modalNote.style.display = 'none';
-        }
-
-        // Update arrow states
-        prevArrow.classList.toggle('disabled', currentImageIndex === 0);
-        nextArrow.classList.toggle('disabled', currentImageIndex === galleryData.length - 1);
-
-        // Add loading effect
-        modalImage.style.opacity = '0.5';
-        modalImage.onload = function() {
-            modalImage.style.opacity = '1';
-        };
-    }
-
     function closeModalFunction() {
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-    }
-
-    function copyWarpCommand(location) {
-        const textToCopy = `/pwarp ${location}`;
-
-        // Copy to clipboard
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                showToast();
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                fallbackCopyTextToClipboard(textToCopy);
-            });
-        } else {
-            fallbackCopyTextToClipboard(textToCopy);
-        }
-    }
-
-    // Fallback copy function for older browsers
-    function fallbackCopyTextToClipboard(text) {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        
-        // Avoid scrolling to bottom
-        textArea.style.top = '0';
-        textArea.style.left = '0';
-        textArea.style.position = 'fixed';
-        textArea.style.opacity = '0';
-        
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        
-        try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                showToast();
-            }
-        } catch (err) {
-            console.error('Fallback: Could not copy text: ', err);
-        }
-
-        document.body.removeChild(textArea);
     }
 
     // Show toast notification
@@ -274,6 +300,8 @@ function reorderGallery(critera, order) {
     for(galleryItem of galleryItems) {
         gallery.appendChild(galleryItem);
     }
+
+    adjustThumbnailsForReordering();
 }
 
 function onSortChanged() {
