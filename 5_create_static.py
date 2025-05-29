@@ -16,7 +16,7 @@ if __name__ == "__main__":
     warps = {} # Warp: FilePath
   dataDirectory, webDirectory, staticDirectory = sys.argv[1:4]
   baseUrl = sys.argv[4] if len(sys.argv) >= 5 else None
-  if baseUrl.endswith("/"):
+  if baseUrl is not None and baseUrl.endswith("/"):
     baseUrl = baseUrl[:-1]
 
   warps = []
