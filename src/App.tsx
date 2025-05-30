@@ -1,6 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
-"use client";
-
 import type React from "react";
 
 import { useState, useEffect, useMemo } from "react";
@@ -16,17 +13,23 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+} from "./components/ui/dialog";
+import Footer from "@/components/Footer";
+import OwnerDisplay from "@/components/OwnerDisplay";
+import CopyWarpButton from "@/components/CopyWarpButton";
 
 interface WarpData {
   name: string;
-	safeName: string;
+  safeName: string;
   owner: string;
   created: string;
   visits: number;
   imageUrl: string;
   info: string;
-	note: string;
+  note: string;
 }
 
 type SortOption = "name" | "owner" | "created" | "visits" | "shuffle";
@@ -38,12 +41,41 @@ export default function PlayerWarpGallery() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-	const [displayMode, setDisplayMode] = useState<"immersive" | "details">("immersive");
+  const [displayMode, setDisplayMode] = useState<"immersive" | "details">(
+    "immersive"
+  );
   const [copiedWarp, setCopiedWarp] = useState<string | null>(null);
+  const [openWarp, setOpenWarp] = useState<WarpData | null>(null);
+  const [initialPath, setInitialPath] = useState<string>("");
 
   useEffect(() => {
     fetchWarps();
   }, []);
+
+  useEffect(() => {
+    // Handle popstate for closing dialog on back
+    const onPopState = () => {
+      setOpenWarp(null);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
+
+  useEffect(() => {
+    if (openWarp) {
+      setInitialPath((prev) => prev || window.location.pathname);
+      window.history.pushState(
+        {},
+        "",
+        `/warp/${encodeURIComponent(openWarp.name)}`
+      );
+    } else if (!openWarp) {
+      window.history.replaceState({}, "", "/");
+    } else if (initialPath) {
+      window.history.replaceState({}, "", initialPath);
+      setInitialPath("");
+    }
+  }, [openWarp]);
 
   const fetchWarps = async (): Promise<void> => {
     try {
@@ -133,14 +165,14 @@ export default function PlayerWarpGallery() {
   }
 
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-gray-900 to-slate-800 py-12">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-12 text-gray-100">
+    <div className="min-h-dvh bg-gradient-to-br from-gray-900 to-slate-800 pt-4 sm:pt-8 md:pt-12">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8">
+        <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-10 md:mb-12 text-gray-100">
           Player-Warp Gallery on Perf-Test
         </h1>
 
         {/* Search and Sort Controls */}
-        <div className="flex flex-col md:flex-row gap-4 mb-4 bg-gray-800 p-4 rounded-lg shadow-md border border-gray-700">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4 bg-gray-800 p-3 sm:p-4 rounded-lg shadow-md border border-gray-700">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
@@ -158,7 +190,7 @@ export default function PlayerWarpGallery() {
               value={sortBy}
               onValueChange={(value: SortOption) => setSortBy(value)}
             >
-              <SelectTrigger className="w-32 bg-gray-700 border-gray-600 text-gray-100">
+              <SelectTrigger className="w-28 sm:w-32 bg-gray-700 border-gray-600 text-gray-100">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
@@ -193,58 +225,59 @@ export default function PlayerWarpGallery() {
         </div>
 
         {/* Results Count */}
-				<div className="flex justify-between items-center mb-4">
-					<div className="text-gray-400">
-						Showing {filteredAndSortedWarps.length} of {warps.length} warps
-					</div>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-2">
+          <div className="text-gray-400 text-sm sm:text-base">
+            Showing {filteredAndSortedWarps.length} of {warps.length} warps
+          </div>
 
-					<Select
-						value={displayMode}
-						onValueChange={(value: "immersive" | "details") => setDisplayMode(value)}
-						defaultValue="immersive"
-					>
-						<SelectTrigger className="w-32 bg-gray-700 border-gray-600 text-gray-100">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
-							<SelectItem value="immersive">Immersive</SelectItem>
-							<SelectItem value="details">Details</SelectItem>
-						</SelectContent>
-					</Select>
-				</div>
+          <Select
+            value={displayMode}
+            onValueChange={(value: "immersive" | "details") =>
+              setDisplayMode(value)
+            }
+            defaultValue="immersive"
+          >
+            <SelectTrigger className="w-28 sm:w-32 bg-gray-700 border-gray-600 text-gray-100">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
+              <SelectItem value="immersive">Immersive</SelectItem>
+              <SelectItem value="details">Details</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
         {/* Warp Gallery */}
-        <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 ${displayMode === "immersive" ? "" : "xl:grid-cols-4"} gap-6`}>
-          {filteredAndSortedWarps.map((warp) => (
+        <div
+          className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6`}
+        >
+          {filteredAndSortedWarps.map((warp) =>
             displayMode === "immersive" ? (
-              <Link
+              <div
                 key={warp.name}
                 className="relative group aspect-video rounded-lg overflow-hidden cursor-pointer bg-gray-800 border border-gray-700 hover:shadow-lg transition-shadow"
-								href={`/warps/${warp.safeName}`}
+                onClick={() => setOpenWarp(warp)}
+                tabIndex={0}
+                role="button"
+                aria-label={`Open details for ${warp.name}`}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") setOpenWarp(warp);
+                }}
               >
                 <img
                   src={warp.imageUrl}
                   alt={`Screenshot of the \"${warp.safeName}\" warp`}
                   className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                 <div className="absolute top-2 left-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                   <span className="bg-black/70 px-2 py-1 rounded text-cyan-300 font-bold text-sm shadow">
                     {warp.name}
                   </span>
-                  <span className="flex items-center bg-black/60 px-2 py-1 rounded text-white text-xs shadow">
-                    by
-                    <img
-                      src={`https://minotar.net/helm/${warp.owner}/100.png`}
-                      width={16}
-                      height={16}
-                      alt={`${warp.owner}'s avatar`}
-                      className="mx-1 rounded"
-                    />
-                    {warp.owner}
-                  </span>
+                  <OwnerDisplay owner={warp.owner} />
                 </div>
-              </Link>
+              </div>
             ) : (
               <Card
                 key={warp.name}
@@ -256,44 +289,51 @@ export default function PlayerWarpGallery() {
                       src={warp.imageUrl}
                       alt={`Screenshot of the \"${warp.name}\" warp`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </div>
                 </CardHeader>
                 <CardContent className="pb-6">
                   <CardTitle className="flex items-center justify-between mb-4 flex-wrap">
-                    <button
-                      onClick={() => copyWarpCommand(warp.name)}
-                      className="text-lg font-bold text-cyan-400 hover:text-cyan-300 transition-colors flex items-center gap-1 group"
-                    >
-                      {warp.name}
-                      {copiedWarp === warp.name ? (
-                        <Check className="h-4 w-4 text-green-400" />
-                      ) : (
-                        <Copy className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      )}
-                    </button>
-                    <div className="text-white flex">
-                      by
-                      <div className="flex ml-2">
-                        <img
-                          src={`https://minotar.net/helm/${warp.owner}/100.png`}
-                          width={16}
-                          height={16}
-                          alt={`${warp.owner}'s avatar`}
-                          className="mr-1"
-                        />
-                        {warp.owner}
-                      </div>
-                    </div>
+                    <CopyWarpButton warpName={warp.name} />
+                    <OwnerDisplay owner={warp.owner} />
                   </CardTitle>
                   <div className="space-y-2 text-sm">
-										<p className="mt-1 text-gray-200">{warp.info}</p>
+                    <p className="mt-1 text-gray-200">{warp.info}</p>
                   </div>
                 </CardContent>
               </Card>
             )
-          ))}
+          )}
         </div>
+
+        {/* Immersive Dialog (controlled) */}
+        {openWarp && (
+          <Dialog
+            open={!!openWarp}
+            onOpenChange={(open) => {
+              if (!open) setOpenWarp(null);
+            }}
+          >
+            <DialogContent className="p-0 flex flex-col md:flex-row bg-gray-800 !w-full max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto overflow-hidden">
+              <div className="flex-[2_2_0%] min-w-0 max-h-[60vh] md:max-h-[70vh] flex items-center justify-center bg-black">
+                <img
+                  src={openWarp.imageUrl}
+                  alt={`Screenshot of the \"${openWarp.name}\" warp`}
+                  className="w-full h-full object-contain"
+                  loading="lazy"
+                />
+              </div>
+              <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-4 p-4 md:p-8 overflow-y-auto max-h-[60vh] md:max-h-[70vh] md:max-w-md mx-auto justify-center">
+                <CopyWarpButton warpName={openWarp.name} />
+                <OwnerDisplay owner={openWarp.owner} />
+                <div className="space-y-2 text-base text-gray-200 break-words">
+                  <p className="whitespace-pre-line">{openWarp.info}</p>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
 
         {filteredAndSortedWarps.length === 0 && (
           <div className="text-center py-12">
@@ -303,6 +343,7 @@ export default function PlayerWarpGallery() {
           </div>
         )}
       </div>
+      <Footer />
     </div>
   );
 }
