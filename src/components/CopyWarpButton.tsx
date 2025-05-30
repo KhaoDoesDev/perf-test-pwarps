@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 

@@ -1,7 +1,7 @@
 import type React from "react";
 
 import { useState, useEffect, useMemo } from "react";
-import { Search, ArrowUp, ArrowDown, Shuffle, Copy, Check } from "lucide-react";
+import { Search, ArrowUp, ArrowDown, Shuffle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,7 +44,6 @@ export default function PlayerWarpGallery() {
   const [displayMode, setDisplayMode] = useState<"immersive" | "details">(
     "immersive"
   );
-  const [copiedWarp, setCopiedWarp] = useState<string | null>(null);
   const [openWarp, setOpenWarp] = useState<WarpData | null>(null);
   const [initialPath, setInitialPath] = useState<string>("");
 
@@ -132,20 +131,6 @@ export default function PlayerWarpGallery() {
       return 0;
     });
   }, [warps, searchTerm, sortBy, sortOrder]);
-
-  const copyWarpCommand = async (warpName: string): Promise<void> => {
-    try {
-      await navigator.clipboard.writeText(`/pwarp ${warpName}`);
-      setCopiedWarp(warpName);
-      setTimeout(() => setCopiedWarp(null), 2000);
-      toast.success("Copied!", {
-        description: `/pwarp ${warpName} copied to clipboard`,
-      });
-    } catch (error) {
-      console.error("Failed to copy to clipboard:", error);
-      toast.error("Failed to copy to clipboard");
-    }
-  };
 
   const toggleSortOrder = (): void => {
     setSortOrder((prev: SortOrder) => (prev === "asc" ? "desc" : "asc"));

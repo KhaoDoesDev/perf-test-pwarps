@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function OwnerDisplay({ owner }: { owner: string }) {
   return (
     <span className="flex items-center gap-2">
