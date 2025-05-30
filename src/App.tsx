@@ -13,10 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-} from "./components/ui/dialog";
+import { Dialog, DialogContent } from "./components/ui/dialog";
 import Footer from "@/components/Footer";
 import OwnerDisplay from "@/components/OwnerDisplay";
 import CopyWarpButton from "@/components/CopyWarpButton";
@@ -41,15 +38,20 @@ export default function PlayerWarpGallery() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-  const [displayMode, setDisplayMode] = useState<"immersive" | "details">(
-    "immersive"
-  );
+  const [displayMode, setDisplayMode] = useState<"immersive" | "details">(() => {
+    const savedMode = localStorage.getItem("displayMode");
+    return (savedMode === "immersive" || savedMode === "details") ? savedMode : "immersive";
+  });
   const [openWarp, setOpenWarp] = useState<WarpData | null>(null);
   const [initialPath, setInitialPath] = useState<string>("");
 
   useEffect(() => {
     fetchWarps();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("displayMode", displayMode);
+  }, [displayMode]);
 
   useEffect(() => {
     // Handle popstate for closing dialog on back
@@ -269,13 +271,23 @@ export default function PlayerWarpGallery() {
                 className="overflow-hidden hover:shadow-lg transition-shadow bg-gray-800 border-gray-700 p-0"
               >
                 <CardHeader className="p-0">
-                  <div className="aspect-video relative overflow-hidden">
+                  <div
+                    className="relative group aspect-video overflow-hidden"
+                    onClick={() => setOpenWarp(warp)}
+                    tabIndex={0}
+                    role="button"
+                    aria-label={`Open details for ${warp.name}`}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") setOpenWarp(warp);
+                    }}
+                  >
                     <img
                       src={warp.imageUrl}
                       alt={`Screenshot of the \"${warp.name}\" warp`}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
                       loading="lazy"
                     />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
                   </div>
                 </CardHeader>
                 <CardContent className="pb-6">
@@ -284,7 +296,7 @@ export default function PlayerWarpGallery() {
                     <OwnerDisplay owner={warp.owner} />
                   </CardTitle>
                   <div className="space-y-2 text-sm">
-                    <p className="mt-1 text-gray-200">{warp.info}</p>
+                    <p className="mt-1 text-gray-200 whitespace-pre-line">{warp.info}</p>
                   </div>
                 </CardContent>
               </Card>
