@@ -296,7 +296,7 @@ export default function PlayerWarpGallery() {
                     <OwnerDisplay owner={warp.owner} />
                   </CardTitle>
                   <div className="space-y-2 text-sm">
-                    <p className="mt-1 text-gray-200">{warp.info}</p>
+                    <p className="mt-1 text-gray-200 whitespace-pre-line">{warp.info}</p>
                   </div>
                 </CardContent>
               </Card>
