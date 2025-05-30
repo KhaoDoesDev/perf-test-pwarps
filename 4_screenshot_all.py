@@ -25,7 +25,7 @@ if __name__ == "__main__":
     if i < startAtIndex:
       continue
     print(f"[{i+1}/{len(warps)}] {warp}...")
-    if warp in [ "create", "remove" ]:
+    if warp in [ "create", "help", "set", "remove", "open", "list", "desc", "amount", "rtp", "icon", "category", "rate", "lock", "cost", "reset", "rename", "setowner", "password", "whitelist", "ban", "managers", "favourite", "info" ]:
       # Use silly inventory instead
       mosquitto_pub("-h", "fd77::1", "-t", "minecraftclient/EnderKill98/cmd/chat", "-m", f"/pwarp open all -search {warp}")
       time.sleep(0.75)
