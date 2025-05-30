@@ -27,7 +27,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r scripts/requirements.txt
 
-    - name: Generate site
+    - name: Generate static data.json and images
       run: python scripts/5_create_static.py data/ public/
 
     - name: Setup Bun.sh
@@ -40,7 +40,13 @@ jobs:
       run: bun run build
 
     - name: Setup Pages
+      id: config-pages
       uses: actions/configure-pages@v4
+
+    - name: Generate per-warp html documents with opengraph metadata
+      env:
+        BASE_URL: ${{steps.config-pages.outputs.base_url}}
+      run: python scripts/6_create_per_warp_files.py public/ ${BASE_URL}
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
