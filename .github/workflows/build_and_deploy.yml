@@ -46,7 +46,7 @@ jobs:
     - name: Generate per-warp html documents with opengraph metadata
       env:
         BASE_URL: ${{steps.config-pages.outputs.base_url}}
-      run: python scripts/6_create_per_warp_files.py public/ ${BASE_URL}
+      run: python scripts/6_create_per_warp_files.py dist/ ${BASE_URL}
 
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
