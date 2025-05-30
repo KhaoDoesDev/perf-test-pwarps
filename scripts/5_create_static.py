@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import jinja2
 import sys
 import os
 import os.path
@@ -11,14 +10,11 @@ import datetime
 import json
 
 if __name__ == "__main__":
-  if len(sys.argv) < 4:
-    print(f"Usage: {sys.argv[0]} <DataDirectory> <WebDirectory> <StaticDirectory> [BaseUrl]", file=sys.stderr)
+  if len(sys.argv) < 2:
+    print(f"Usage: {sys.argv[0]} <DataDirectory> <StaticDirectory>", file=sys.stderr)
     exit(1)
     warps = {} # Warp: FilePath
-  dataDirectory, webDirectory, staticDirectory = sys.argv[1:4]
-  baseUrl = sys.argv[4] if len(sys.argv) >= 5 else None
-  if baseUrl is not None and baseUrl.endswith("/"):
-    baseUrl = baseUrl[:-1]
+  dataDirectory, staticDirectory = sys.argv[1:3]
 
   warps = []
   for fileName in os.listdir(dataDirectory):
@@ -34,11 +30,11 @@ if __name__ == "__main__":
     screenshotHref = None
     if os.path.exists(screenshotFilePath):
       # Copy screenshot into static/imgs
-      screenshotStaticImgFolderPath = os.path.join(staticDirectory, "img")
+      screenshotStaticImgFolderPath = os.path.join(staticDirectory, "images")
       screenshotStaticPath = os.path.join(screenshotStaticImgFolderPath, fileNameBase + ".webp")
       pathlib.Path(screenshotStaticImgFolderPath).mkdir(parents=True, exist_ok=True)
       shutil.copyfile(screenshotFilePath, screenshotStaticPath)
-      screenshotHref = "img/" + urllib.parse.quote(fileNameBase) + ".webp" # Yes, it's double-quoted!
+      screenshotHref = "/images/" + urllib.parse.quote(fileNameBase) + ".webp" # Yes, it's double-quoted!
 
     note = None
     if os.path.exists(noteFilePath):
@@ -77,7 +73,7 @@ if __name__ == "__main__":
       "owner": owner,
       "created": created,
       "visits": visits,
-      "screenshotHref": screenshotHref,
+      "imageUrl": screenshotHref,
       "info": info,
       "note": note,
     })

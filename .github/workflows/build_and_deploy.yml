@@ -1,5 +1,3 @@
-# Mostly generated with Claude Sonnet 4
-
 name: Build and Deploy
 
 on:
@@ -29,12 +27,19 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - uses: actions/configure-pages@v5
-      id: config-pages # Gets us the base url in advance
     - name: Generate site
-      env:
-        BASE_URL: ${{steps.config-pages.outputs.base_url}}
-      run: python 5_create_static.py data/ web/ dist/ ${BASE_URL}
+      run: python 5_create_static.py data/ public/
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build Vite site
+      run: npm run build
 
     - name: Setup Pages
       uses: actions/configure-pages@v4
@@ -42,7 +47,7 @@ jobs:
     - name: Upload Pages artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: dist/
+        path: ./dist
 
     - name: Deploy to Pages
       uses: actions/deploy-pages@v4
