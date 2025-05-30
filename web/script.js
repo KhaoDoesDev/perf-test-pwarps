@@ -323,7 +323,7 @@ function reorderGallery(critera, order) {
     let sortMult = order == "desc" ? -1 : 1;
     if(critera == "name") {
         console.log("Sorting by name (" + order + ")");
-        const onlyAlphaNum = (str) => str.match(/[a-zA-Z0-9]/g).join("");
+        const onlyAlphaNum = (str) => typeof(str) === "string" ? str.match(/[a-zA-Z0-9]/g).join("") : "";
         galleryItems.sort((a, b) => onlyAlphaNum(a.dataset.location).toLowerCase().localeCompare(onlyAlphaNum(b.dataset.location).toLowerCase()) * sortMult);
     } else if(critera == "owner") {
         console.log("Sorting by owner (" + order + ")");
