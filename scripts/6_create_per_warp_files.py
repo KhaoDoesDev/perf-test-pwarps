@@ -23,8 +23,8 @@ with open(os.path.join(staticDirectory, "404.html")) as f:
 
 # Remove pre-defined meta-tags
 for child in document.find("head").find_all("head"):
-  if ((child.has_attr("property") and child["property"].startswith("og:"))
-          or (child.has_attr("name") and child["name"] in [ "title", "description" ])):
+  if (child.has_attr("property") and child["property"].startswith("og:")) \
+          or (child.has_attr("name") and child["name"] in [ "title", "description" ]):
     child.decompose() # Remove it
 
 # Create per-warp documents
