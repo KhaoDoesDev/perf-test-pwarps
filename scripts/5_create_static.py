@@ -78,32 +78,5 @@ if __name__ == "__main__":
       "note": note,
     })
 
-  # Copy files in web/ + render .j2 templates out, removing that extension
-  env = jinja2.Environment(loader=jinja2.FileSystemLoader(webDirectory), autoescape=True)
-  for srcRoot, dirs, files in os.walk(webDirectory):
-    tgtRoot = os.path.normpath(os.path.join(staticDirectory, os.path.relpath(srcRoot, webDirectory)))
-    print(f"SrcRoot: {srcRoot}, TgtRoot: {tgtRoot}")
-    for fileName in files:
-      srcPath = os.path.join(srcRoot, fileName)
-      tgtPath = os.path.join(tgtRoot, fileName)
-      tgtPaths = [ (warp, tgtPath.replace("%warp%", warp["safeName"])) for warp in warps ] if "%warp%" in tgtPath else [ (None, tgtPath) ]
-      for warp, tgtPath in tgtPaths:
-        if fileName.endswith(".j2"):
-          renderSrcPath = os.path.relpath(os.path.join(srcRoot, fileName), webDirectory) # Relative to webdir as specified in Environment
-          renderTgtPath = tgtPath[:-len(".j2")]
-          renderTgtDir = os.path.dirname(tgtPath)
-          if not os.path.exists(renderTgtDir):
-            pathlib.Path(renderTgtDir).mkdir(parents=True) # Ensure directories in path exist
-          root = os.path.relpath(staticDirectory, os.path.dirname(renderTgtPath))
-          if baseUrl is not None:
-            root = baseUrl
-          print(f"Rendering Jinja2: {renderSrcPath} ==> {renderTgtPath} (warp: {'None' if warp is None else warp['name']}, root: {root})")
-          template = env.get_template(renderSrcPath)
-          rendered = template.render(warp=warp, warps=warps, root=root)
-          with open(renderTgtPath, "w") as renderedFile:
-            renderedFile.write(rendered)
-        else:
-          shutil.copyfile(srcPath, tgtPath)
-
   with open(os.path.join(staticDirectory, "data.json"), "w") as jsonFile:
     json.dump(warps, jsonFile, indent=4)
