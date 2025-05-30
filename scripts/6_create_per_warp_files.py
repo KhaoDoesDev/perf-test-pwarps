@@ -22,7 +22,7 @@ with open(os.path.join(staticDirectory, "404.html")) as f:
   document = BeautifulSoup(f, "html.parser")
 
 # Remove pre-defined meta-tags
-for child in document.find("head").find_all("head"):
+for child in document.head.find_all("meta"):
   if (child.has_attr("property") and child["property"].startswith("og:")) \
           or (child.has_attr("name") and child["name"] in [ "title", "description" ]):
     child.decompose() # Remove it
@@ -31,21 +31,20 @@ for child in document.find("head").find_all("head"):
 for warp in warps:
   # Copy document
   warpDoc = copy(document)
-  head = warpDoc.find("head")
 
-  head.find("title").string = f"/pwarp {warp["name"]}"
+  warpDoc.head.find("title").string = f"/pwarp {warp["name"]}"
 
   # https://ogp.me/
-  head.append(warpDoc.new_tag("meta", property="og:title", content=f"/pwarp {warp["name"]}"))
-  head.append(warpDoc.new_tag("meta", property="og:type", content="website"))
-  head.append(warpDoc.new_tag("meta", property="og:url", content=f"{baseUrl}/warp/{warp["safeName"]}"))
-  head.append(warpDoc.new_tag("meta", property="og:description", content=f"{warp["owner"]}'s Player Warp: {warp["name"]}\nCreated at {warp["created"]} and visited at least {warp["visits"]} times!"))
-  head.append(warpDoc.new_tag("meta", property="og:image", content=f"{baseUrl}/{warp["imageUrl"]}"))
-  head.append(warpDoc.new_tag("meta", property="og:image:type", content="image/webp"))
-  head.append(warpDoc.new_tag("meta", property="og:image:alt", content=f"Screenshot of Player Warp {warp["name"]}"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:title", content=f"/pwarp {warp["name"]}"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:type", content="website"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:url", content=f"{baseUrl}/warp/{warp["safeName"]}"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:description", content=f"{warp["owner"]}'s Player Warp: {warp["name"]}\nCreated at {warp["created"]} and visited at least {warp["visits"]} times!"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:image", content=f"{baseUrl}/{warp["imageUrl"]}"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:image:type", content="image/webp"))
+  warpDoc.head.append(warpDoc.new_tag("meta", property="og:image:alt", content=f"Screenshot of Player Warp {warp["name"]}"))
 
-  head.append(warpDoc.new_tag("meta", property="twitter:card", content="summary_large_image")) # request bigger image
-  head.append(warpDoc.new_tag("meta", property="theme-color", content="#55FFFF")) # §b
+  warpDoc.head.append(warpDoc.new_tag("meta", property="twitter:card", content="summary_large_image")) # request bigger image
+  warpDoc.head.append(warpDoc.new_tag("meta", property="theme-color", content="#55FFFF")) # §b
 
   # Safe to static/warp/<safeName>/index.html
   indexFilePath = os.path.join(staticDirectory, "warp", warp["safeName"], "index.html")
