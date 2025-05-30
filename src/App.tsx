@@ -38,15 +38,20 @@ export default function PlayerWarpGallery() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [sortBy, setSortBy] = useState<SortOption>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-  const [displayMode, setDisplayMode] = useState<"immersive" | "details">(
-    "immersive"
-  );
+  const [displayMode, setDisplayMode] = useState<"immersive" | "details">(() => {
+    const savedMode = localStorage.getItem("displayMode");
+    return (savedMode === "immersive" || savedMode === "details") ? savedMode : "immersive";
+  });
   const [openWarp, setOpenWarp] = useState<WarpData | null>(null);
   const [initialPath, setInitialPath] = useState<string>("");
 
   useEffect(() => {
     fetchWarps();
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("displayMode", displayMode);
+  }, [displayMode]);
 
   useEffect(() => {
     // Handle popstate for closing dialog on back
