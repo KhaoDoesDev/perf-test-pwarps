@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: '3.13'
 
-    - name: Install dependencies
+    - name: Install Python dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r scripts/requirements.txt
@@ -33,7 +33,7 @@ jobs:
     - name: Setup Bun.sh
       uses: oven-sh/setup-bun@v2
 
-    - name: Install dependencies
+    - name: Install Bun dependencies
       run: bun install
 
     - name: Build Vite site
