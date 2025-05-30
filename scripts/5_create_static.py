@@ -34,7 +34,7 @@ if __name__ == "__main__":
       screenshotStaticPath = os.path.join(screenshotStaticImgFolderPath, fileNameBase + ".webp")
       pathlib.Path(screenshotStaticImgFolderPath).mkdir(parents=True, exist_ok=True)
       shutil.copyfile(screenshotFilePath, screenshotStaticPath)
-      screenshotHref = f"/images/{fileNameBase}.webp"
+      screenshotHref = "/images/" + urllib.parse.quote(fileNameBase) + ".webp" # Yes, it's double-quoted!
 
     note = None
     if os.path.exists(noteFilePath):
