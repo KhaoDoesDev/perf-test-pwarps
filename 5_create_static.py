@@ -8,6 +8,7 @@ import urllib.parse
 import shutil
 import pathlib
 import datetime
+import json
 
 if __name__ == "__main__":
   if len(sys.argv) < 4:
@@ -107,3 +108,6 @@ if __name__ == "__main__":
             renderedFile.write(rendered)
         else:
           shutil.copyfile(srcPath, tgtPath)
+
+  with open(os.path.join(staticDirectory, "data.json"), "w") as jsonFile:
+    json.dump(warps, jsonFile, indent=4)
