@@ -143,7 +143,7 @@ export default function PlayerWarpGallery() {
       <div className="min-h-dvh bg-gradient-to-br from-gray-900 to-slate-800 py-12">
         <div className="max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-center mb-12 text-gray-100">
-            Player-Warp Gallery on Perf-Test
+            Perf-Test Warps<span className="text-xs">.info</span>
           </h1>
           <div className="text-center text-gray-400">Loading warps...</div>
         </div>
@@ -155,7 +155,7 @@ export default function PlayerWarpGallery() {
     <div className="min-h-dvh bg-gradient-to-br from-gray-900 to-slate-800 pt-4 sm:pt-8 md:pt-12">
       <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-8">
         <h1 className="text-3xl sm:text-4xl font-bold text-center mb-6 sm:mb-10 md:mb-12 text-gray-100">
-          Player-Warp Gallery on Perf-Test
+            Perf-Test Warps<span className="text-xs">.info</span>
         </h1>
 
         {/* Search and Sort Controls */}
