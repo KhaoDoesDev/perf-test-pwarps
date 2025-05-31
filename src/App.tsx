@@ -264,6 +264,11 @@ export default function PlayerWarpGallery() {
                   </span>
                   <OwnerDisplay owner={warp.owner} />
                 </div>
+                { warp.note && (
+                  <div className="absolute bottom-2 left-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="bg-black/70 px-2 py-1 rounded font-bold text-sm shadow"> {warp.note} </span>
+                  </div>
+                ) }
               </div>
             ) : (
               <Card
@@ -297,6 +302,9 @@ export default function PlayerWarpGallery() {
                   </CardTitle>
                   <div className="space-y-2 text-sm">
                     <p className="mt-1 text-gray-200 whitespace-pre-line">{warp.info}</p>
+                    { warp.note && (
+                        <div className="bg-black/30 rounded px-2 py-2"> {warp.note} </div>
+                    ) }
                   </div>
                 </CardContent>
               </Card>

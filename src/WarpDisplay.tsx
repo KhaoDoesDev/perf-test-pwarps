@@ -96,6 +96,9 @@ export default function WarpDisplay() {
             <div className="flex-[1_1_0%] min-w-0 flex flex-col gap-4 p-4 md:p-8 overflow-y-auto max-h-[60vh] md:max-h-[70vh] md:max-w-md mx-auto justify-center">
               <CopyWarpButton warpName={warp.name} />
               <OwnerDisplay owner={warp.owner} />
+              { warp.note && (
+                <div className="bg-black/30 rounded px-2 py-2"> {warp.note} </div>
+              ) }
               <div className="space-y-2 text-base text-gray-200 break-words">
                 <p className="whitespace-pre-line">{warp.info}</p>
               </div>
