@@ -116,16 +116,21 @@ export default function PlayerWarpGallery() {
 
       if (sortBy === "created") {
         aValue = new Date(
-          a.created.split(" ")[0].split("/").reverse().join("-")
+            a.created.split(" ")[0].split("/").reverse().join("-")
         );
         bValue = new Date(
-          b.created.split(" ")[0].split("/").reverse().join("-")
+            b.created.split(" ")[0].split("/").reverse().join("-")
         );
       }
 
       if (typeof aValue === "string" && typeof bValue === "string") {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
+
+        if(sortBy === "visits") {
+          aValue = aValue ? parseInt(aValue) : 0;
+          bValue = bValue ? parseInt(bValue) : 0;
+        }
       }
 
       if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
