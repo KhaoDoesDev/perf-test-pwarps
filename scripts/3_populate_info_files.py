@@ -29,7 +29,7 @@ if __name__ == "__main__":
       line = line[line.index("[CHAT] ") + len("[CHAT] "):]
       if "PW » Warp Information for " not in line:
         continue
-      warp = line.split("PW » Warp Information for ")[1].split(":")[0]
+      warp = line.split("PW » Warp Information for ")[1].split("\\nPW » ")[0][:-1]
       warpOrig = warp
       warpInfoLines = line.split("\\n")
 
